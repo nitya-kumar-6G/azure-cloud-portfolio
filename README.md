@@ -2,7 +2,7 @@
 
 My personal portfolio site, hosted on **Microsoft Azure** and deployed automatically from GitHub.
 
-**Live site:** _(add your Azure URL here once it's deployed)_
+**Live site:** https://gray-desert-09b88710f.1.azurestaticapps.net/
 
 ## What this project does
 

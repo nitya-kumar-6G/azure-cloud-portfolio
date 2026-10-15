@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://gray-desert-09b88710f.1.azurestaticapps.net/sitemap.xml
