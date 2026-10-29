@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nitya A. Kumar | Data Analytics &amp; Azure Cloud Portfolio</title>
-  <meta name="description" content="Nitya A. Kumar is a Rutgers IT &amp; Informatics graduate (Magna Cum Laude) and Microsoft Certified Azure Fundamentals holder. See her experience, AI and data projects, and papers.">
+  <meta name="description" content="Nitya A. Kumar is a Rutgers IT &amp; Informatics graduate (Magna Cum Laude) and Microsoft Certified in Azure Fundamentals and Azure AI Fundamentals. See her experience, AI and data projects, and papers.">
   <meta name="author" content="Nitya A. Kumar">
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#6f4fa0">
@@ -15,7 +15,7 @@
   <meta property="og:type" content="profile">
   <meta property="og:site_name" content="Nitya A. Kumar">
   <meta property="og:title" content="Nitya A. Kumar | Data Analytics &amp; Azure Cloud Portfolio">
-  <meta property="og:description" content="Rutgers IT &amp; Informatics graduate, Magna Cum Laude, Azure Fundamentals certified. Experience, AI and data projects, and papers.">
+  <meta property="og:description" content="Rutgers IT &amp; Informatics graduate, Magna Cum Laude, Azure Fundamentals and Azure AI Fundamentals certified. Experience, AI and data projects, and papers.">
   <meta property="og:image" content="https://gray-desert-09b88710f.1.azurestaticapps.net/docs/social-preview.png">
   <meta property="og:url" content="https://gray-desert-09b88710f.1.azurestaticapps.net/">
   <meta property="og:image:width" content="1200">
@@ -36,8 +36,11 @@
     "alternateName": "Nitya Kumar",
     "email": "mailto:nitya.a.kumar6@gmail.com",
     "alumniOf": { "@type": "CollegeOrUniversity", "name": "Rutgers University–New Brunswick" },
-    "hasCredential": { "@type": "EducationalOccupationalCredential", "name": "Microsoft Certified: Azure Fundamentals (AZ-900)" },
-    "knowsAbout": ["Data Analytics", "Microsoft Azure", "Python", "R", "Tableau", "Machine Learning", "Information Visualization"],
+    "hasCredential": [
+      { "@type": "EducationalOccupationalCredential", "name": "Microsoft Certified: Azure AI Fundamentals (AI-901)" },
+      { "@type": "EducationalOccupationalCredential", "name": "Microsoft Certified: Azure Fundamentals (AZ-900)" }
+    ],
+    "knowsAbout": ["Data Analytics", "Microsoft Azure", "Azure AI", "Python", "R", "Tableau", "Machine Learning", "Information Visualization"],
     "address": { "@type": "PostalAddress", "addressRegion": "NJ", "addressCountry": "US" },
     "sameAs": [
       "https://www.linkedin.com/in/nitya-kumar-01567227b/",
@@ -157,6 +160,10 @@
     }
     .buttons a:hover { background: var(--accent); color: white; }
 
+    .cert-gallery { margin-bottom: 16px; }
+    .cert-gallery .thumb { background: #1b2a4a; padding: 0; aspect-ratio: 1492 / 838; }
+    .cert-gallery .thumb img { object-fit: cover; }
+
     footer { text-align: center; color: var(--muted); font-size: 0.9rem; padding-bottom: 32px; }
   </style>
 </head>
@@ -164,7 +171,7 @@
 
   <header>
     <h1>Nitya A. Kumar</h1>
-    <p>IT &amp; Informatics Graduate | Microsoft Certified: Azure Fundamentals</p>
+    <p>IT &amp; Informatics Graduate | Microsoft Certified: Azure Fundamentals &amp; Azure AI Fundamentals</p>
     <p>
       <a href="mailto:nitya.a.kumar6@gmail.com">Email</a> ·
       <a href="https://www.linkedin.com/in/nitya-kumar-01567227b/">LinkedIn</a> ·
@@ -210,8 +217,35 @@
 
       <section>
         <h2>Certifications</h2>
-        <ul>
-          <li>Microsoft Certified: Azure Fundamentals (AZ-900), Sep 2026</li>
+        <div class="gallery cert-gallery">
+          <div class="card">
+            <a class="thumb" href="docs/certs/ai-901-azure-ai-fundamentals.jpg" target="_blank" rel="noopener">
+              <img src="docs/thumbs/ai-901-azure-ai-fundamentals.jpg" alt="Microsoft Certified: Azure AI Fundamentals certificate for Nitya A Kumar, earned October 29, 2026" loading="lazy">
+            </a>
+            <div class="body">
+              <h3>Azure AI Fundamentals (AI-901)</h3>
+              <p>Microsoft Certified · Oct 2026</p>
+              <div class="buttons">
+                <a href="docs/certs/ai-901-azure-ai-fundamentals.jpg" target="_blank" rel="noopener">View certificate</a>
+                <a href="https://learn.microsoft.com/en-us/users/nityakumar-1276/credentials/certification/azure-ai-fundamentals?tab=credentials-tab" target="_blank" rel="noopener">Verify on Microsoft Learn</a>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <a class="thumb" href="docs/certs/az-900-azure-fundamentals.jpg" target="_blank" rel="noopener">
+              <img src="docs/thumbs/az-900-azure-fundamentals.jpg" alt="Microsoft Certified: Azure Fundamentals certificate for Nitya A Kumar, earned September 14, 2026" loading="lazy">
+            </a>
+            <div class="body">
+              <h3>Azure Fundamentals (AZ-900)</h3>
+              <p>Microsoft Certified · Sep 2026</p>
+              <div class="buttons">
+                <a href="docs/certs/az-900-azure-fundamentals.jpg" target="_blank" rel="noopener">View certificate</a>
+                <a href="https://learn.microsoft.com/en-us/users/nityakumar-1276/credentials/certification/azure-fundamentals?tab=credentials-tab" target="_blank" rel="noopener">Verify on Microsoft Learn</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ul class="other-certs">
           <li>Harvard Online: Machine Learning for Leaders, Aug 2026</li>
           <li>L'Oréal Brandstorm Global Innovation Challenge Certificate, 2026</li>
         </ul>
@@ -220,7 +254,7 @@
       <section>
         <h2>Skills</h2>
         <div class="tags">
-          <span>Microsoft Azure</span><span>Python</span><span>R</span><span>HTML/CSS</span>
+          <span>Microsoft Azure</span><span>Azure AI</span><span>Python</span><span>R</span><span>HTML/CSS</span>
           <span>Excel</span><span>Tableau</span><span>Figma</span><span>Linux</span>
           <span>Adobe Creative Cloud</span>
         </div>
