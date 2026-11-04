@@ -49,134 +49,271 @@
   }
   </script>
   <script>document.documentElement.classList.add('js');</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     /* ---------- Colors & basics (change these to restyle the whole page) ---------- */
     :root {
       --accent: #6f4fa0;        /* deep lilac: headings and links */
-      --accent-light: #9b7fd4;  /* lilac: header gradient start */
+      --accent-light: #9b7fd4;  /* lilac */
+      --accent-soft: #c9b6ef;   /* soft lilac: glows, dots */
       --tag-bg: #efe7fa;        /* pale lilac: tags, active tab */
       --text: #2a2235;
       --muted: #6b6178;
       --bg: #faf7fd;            /* very light lilac page background */
       --card: #ffffff;
+      --line: #e6dcf5;
+      --shadow: 0 1px 2px rgba(60, 30, 90, 0.06), 0 8px 24px rgba(60, 30, 90, 0.07);
+      --shadow-hover: 0 2px 4px rgba(60, 30, 90, 0.08), 0 16px 40px rgba(60, 30, 90, 0.14);
+      --serif: "Fraunces", Georgia, serif;
+      --sans: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
     }
     * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
       margin: 0;
-      font-family: "Segoe UI", system-ui, sans-serif;
+      font-family: var(--sans);
       color: var(--text);
       background: var(--bg);
-      line-height: 1.6;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
     }
-    header {
-      background: linear-gradient(135deg, var(--accent-light), var(--accent));
-      color: white;
-      text-align: center;
-      padding: 48px 16px 32px;
-    }
-    header h1 { margin: 0; font-size: 2.4rem; }
-    header p { margin: 6px 0 0; opacity: 0.95; }
-    header a { color: white; }
+    ::selection { background: var(--accent-soft); color: var(--text); }
+    a { color: var(--accent); }
 
-    /* ---------- Tab bar ---------- */
+    /* ---------- Scroll progress bar ---------- */
+    .progress {
+      position: fixed; top: 0; left: 0; height: 3px; width: 100%; z-index: 50;
+      background: linear-gradient(90deg, var(--accent-light), var(--accent));
+      transform-origin: 0 50%; transform: scaleX(0);
+    }
+
+    /* ---------- Hero ---------- */
+    header {
+      position: relative; overflow: hidden;
+      background: linear-gradient(160deg, #3d2a5c 0%, var(--accent) 55%, var(--accent-light) 100%);
+      color: white; text-align: center;
+      padding: 96px 20px 88px;
+    }
+    header .blob {
+      position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.55;
+      animation: drift 18s ease-in-out infinite alternate;
+    }
+    header .b1 { width: 380px; height: 380px; background: #c9b6ef; top: -120px; left: -80px; }
+    header .b2 { width: 320px; height: 320px; background: #f3b6d8; bottom: -140px; right: -60px; animation-delay: -6s; }
+    header .b3 { width: 220px; height: 220px; background: #8fb8ff; top: 30%; left: 60%; opacity: 0.35; animation-delay: -12s; }
+    @keyframes drift {
+      from { transform: translate(0, 0) scale(1); }
+      to   { transform: translate(40px, 30px) scale(1.12); }
+    }
+    header .inner { position: relative; max-width: 760px; margin: 0 auto; }
+    .eyebrow {
+      display: inline-block; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.14em;
+      text-transform: uppercase; opacity: 0.85; margin-bottom: 14px;
+    }
+    header h1 {
+      margin: 0; font-family: var(--serif); font-weight: 500;
+      font-size: clamp(2.6rem, 7vw, 4.2rem); line-height: 1.05; letter-spacing: -0.01em;
+    }
+    header .tagline { margin: 16px auto 0; max-width: 560px; font-size: 1.08rem; opacity: 0.92; }
+    .chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 24px; }
+    .chips span {
+      font-size: 0.85rem; font-weight: 500; padding: 5px 14px; border-radius: 999px;
+      background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.28);
+      backdrop-filter: blur(6px);
+    }
+    .contact { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 28px; }
+    .contact a {
+      color: white; text-decoration: none; font-weight: 600; font-size: 0.95rem;
+      padding: 10px 22px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.5);
+      transition: background 0.2s, color 0.2s, transform 0.2s;
+    }
+    .contact a.primary { background: white; color: var(--accent); border-color: white; }
+    .contact a:hover { transform: translateY(-2px); background: rgba(255,255,255,0.18); }
+    .contact a.primary:hover { background: #f4eefc; }
+
+    /* ---------- Tab bar (frosted, sticky) ---------- */
     nav {
-      position: sticky; top: 0; z-index: 10;
-      background: var(--card);
-      box-shadow: 0 1px 4px rgba(60, 30, 90, 0.10);
+      position: sticky; top: 0; z-index: 20;
+      display: flex; justify-content: center;
+      padding: 12px 16px;
+      background: rgba(250, 247, 253, 0.75);
+      backdrop-filter: saturate(160%) blur(14px);
+      -webkit-backdrop-filter: saturate(160%) blur(14px);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s;
     }
+    nav.scrolled { border-bottom-color: var(--line); }
     nav ul {
-      list-style: none; margin: 0 auto; padding: 8px 16px;
-      max-width: 860px; display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;
+      position: relative; list-style: none; margin: 0; padding: 5px;
+      display: flex; gap: 2px; flex-wrap: nowrap; justify-content: center;
+      background: var(--card); border-radius: 999px; box-shadow: var(--shadow);
     }
+    nav .indicator {
+      position: absolute; top: 5px; left: 0; height: calc(100% - 10px); width: 0;
+      background: var(--accent); border-radius: 999px;
+      transition: transform 0.35s cubic-bezier(.4,.1,.2,1), width 0.35s cubic-bezier(.4,.1,.2,1);
+    }
+    nav li { position: relative; z-index: 1; }
     nav a {
-      display: block; padding: 6px 16px; border-radius: 999px;
-      color: var(--muted); text-decoration: none; font-weight: 600;
+      display: block; padding: 7px 18px; border-radius: 999px;
+      color: var(--muted); text-decoration: none; font-weight: 600; font-size: 0.95rem;
+      transition: color 0.25s;
     }
     nav a:hover { color: var(--accent); }
-    nav a.active { background: var(--tag-bg); color: var(--accent); }
+    nav a.active { color: white; }
+    .no-indicator nav a.active { background: var(--accent); }
 
-    main { max-width: 860px; margin: 0 auto; padding: 24px 16px 48px; }
+    main { max-width: 880px; margin: 0 auto; padding: 32px 18px 56px; }
     .js .panel { display: none; }
-    .js .panel.active { display: block; }
+    .js .panel.active { display: block; animation: panelIn 0.45s ease both; }
+    @keyframes panelIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: none; }
+    }
     section {
       background: var(--card);
-      border-radius: 10px;
-      padding: 20px 24px;
-      margin-bottom: 20px;
-      box-shadow: 0 1px 3px rgba(60, 30, 90, 0.10);
-      border-top: 3px solid var(--tag-bg);
+      border-radius: 18px;
+      padding: 28px 30px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--line);
     }
     h2 {
-      margin-top: 0;
-      color: var(--accent);
-      font-size: 1.2rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      margin: 0 0 18px;
+      font-family: var(--serif); font-weight: 600;
+      color: var(--text);
+      font-size: 1.55rem; letter-spacing: -0.005em;
+      display: flex; align-items: center; gap: 12px;
     }
-    .item { margin-bottom: 18px; }
+    h2::before {
+      content: ""; width: 10px; height: 10px; border-radius: 3px; transform: rotate(45deg);
+      background: linear-gradient(135deg, var(--accent-light), var(--accent));
+    }
+    .item { margin-bottom: 22px; }
     .item:last-child { margin-bottom: 0; }
-    .row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px 16px; }
-    .title { font-weight: 600; }
-    .meta { color: var(--muted); font-size: 0.95rem; }
-    ul { margin: 6px 0 0; padding-left: 20px; }
-    li::marker { color: var(--accent-light); }
-    .tags span {
-      display: inline-block;
-      background: var(--tag-bg);
-      color: var(--accent);
-      border-radius: 999px;
-      padding: 2px 12px;
-      margin: 4px 6px 0 0;
-      font-size: 0.9rem;
+    .row { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 4px 16px; }
+    .title { font-weight: 700; }
+    .meta { color: var(--muted); font-size: 0.93rem; }
+    .row .meta {
+      font-size: 0.8rem; font-weight: 600; color: var(--accent);
+      background: var(--tag-bg); padding: 2px 10px; border-radius: 999px; white-space: nowrap;
     }
-    .see-project { margin-top: 6px; font-size: 0.95rem; }
-    .see-project a { color: var(--accent); font-weight: 600; }
+    ul { margin: 8px 0 0; padding-left: 20px; }
+    li { margin-bottom: 4px; }
+    li::marker { color: var(--accent-light); }
+
+    /* Timeline look for Experience & Leadership */
+    #experience .item, #leadership .item {
+      position: relative; padding-left: 34px; padding-bottom: 4px;
+    }
+    #experience .item::before, #leadership .item::before {
+      content: ""; position: absolute; left: 4px; top: 8px; width: 12px; height: 12px;
+      border-radius: 50%; background: var(--card); border: 3px solid var(--accent-light);
+      box-shadow: 0 0 0 4px var(--tag-bg);
+    }
+    #experience .item::after, #leadership .item::after {
+      content: ""; position: absolute; left: 9px; top: 28px; bottom: -18px; width: 2px;
+      background: linear-gradient(var(--line), transparent);
+    }
+    #experience .item:last-child::after, #leadership .item:last-child::after { display: none; }
+
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tags span {
+      background: var(--tag-bg); color: var(--accent);
+      border-radius: 999px; padding: 5px 14px; font-size: 0.9rem; font-weight: 600;
+      transition: transform 0.2s, background 0.2s, color 0.2s;
+    }
+    .tags span:hover { transform: translateY(-2px); background: var(--accent); color: white; }
+    .see-project { margin-top: 8px; font-size: 0.93rem; }
+    .see-project a { color: var(--accent); font-weight: 600; text-decoration: none; }
+    .see-project a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
     /* ---------- Project gallery ---------- */
     .gallery {
-      display: grid; gap: 20px;
+      display: grid; gap: 22px;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     }
     .card {
-      background: var(--card); border-radius: 10px; overflow: hidden;
-      box-shadow: 0 1px 3px rgba(60, 30, 90, 0.12);
+      background: var(--card); border-radius: 16px; overflow: hidden;
+      border: 1px solid var(--line); box-shadow: var(--shadow);
       display: flex; flex-direction: column;
+      transition: transform 0.3s cubic-bezier(.2,.8,.2,1), box-shadow 0.3s;
     }
+    .card:hover { transform: translateY(-6px); box-shadow: var(--shadow-hover); }
     .card .thumb {
-      display: block; aspect-ratio: 16 / 10; background: var(--tag-bg); overflow: hidden; padding: 10px;
+      display: block; aspect-ratio: 16 / 10; overflow: hidden; padding: 12px;
+      background: linear-gradient(135deg, #f4eefc, #e9defa);
     }
     .card .thumb img {
       width: 100%; height: 100%; object-fit: contain; display: block;
-      transition: transform 0.2s;
+      transition: transform 0.4s cubic-bezier(.2,.8,.2,1);
     }
-    .card .thumb:hover img { transform: scale(1.03); }
-    .card .body { padding: 14px 16px 16px; display: flex; flex-direction: column; flex: 1; }
-    .card h3 { margin: 0 0 4px; font-size: 1.02rem; }
-    .card p { margin: 0 0 12px; color: var(--muted); font-size: 0.93rem; flex: 1; }
+    .card:hover .thumb img { transform: scale(1.04); }
+    .card .body { padding: 16px 18px 18px; display: flex; flex-direction: column; flex: 1; }
+    .card h3 { margin: 0 0 6px; font-size: 1.04rem; line-height: 1.35; }
+    .card p { margin: 0 0 14px; color: var(--muted); font-size: 0.93rem; flex: 1; }
     .buttons { display: flex; gap: 8px; flex-wrap: wrap; }
     .buttons a {
       background: var(--tag-bg); color: var(--accent); text-decoration: none;
-      font-weight: 600; font-size: 0.88rem; padding: 4px 12px; border-radius: 999px;
+      font-weight: 600; font-size: 0.86rem; padding: 6px 14px; border-radius: 999px;
+      transition: background 0.2s, color 0.2s;
     }
     .buttons a:hover { background: var(--accent); color: white; }
 
-    .cert-gallery { margin-bottom: 16px; }
+    .cert-gallery { margin-bottom: 18px; }
     .cert-gallery .thumb { background: #1b2a4a; padding: 0; aspect-ratio: 1492 / 838; }
     .cert-gallery .thumb img { object-fit: cover; }
 
-    footer { text-align: center; color: var(--muted); font-size: 0.9rem; padding-bottom: 32px; }
+    /* ---------- Reveal on scroll ---------- */
+    .js .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .js .reveal.in { opacity: 1; transform: none; }
+
+    footer {
+      text-align: center; color: var(--muted); font-size: 0.88rem; padding: 8px 16px 40px;
+    }
+    footer .top {
+      display: inline-block; margin-bottom: 10px; font-weight: 600; text-decoration: none;
+    }
+
+    @media (max-width: 600px) {
+      header { padding: 72px 18px 64px; }
+      section { padding: 22px 18px; border-radius: 14px; }
+      nav { padding: 10px 8px; }
+      nav a { padding: 6px 11px; font-size: 0.84rem; }
+      .row .meta { white-space: normal; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      html { scroll-behavior: auto; }
+      .js .reveal { opacity: 1; transform: none; }
+    }
   </style>
 </head>
 <body>
 
+  <div class="progress" aria-hidden="true"></div>
+
   <header>
-    <h1>Nitya A. Kumar</h1>
-    <p>IT &amp; Informatics Graduate | Microsoft Certified: Azure Fundamentals &amp; Azure AI Fundamentals</p>
-    <p>
-      <a href="mailto:nitya.a.kumar6@gmail.com">Email</a> ·
-      <a href="https://www.linkedin.com/in/nitya-kumar-01567227b/">LinkedIn</a> ·
-      <a href="https://github.com/nitya-kumar-6G">GitHub</a>
-    </p>
+    <div class="blob b1" aria-hidden="true"></div>
+    <div class="blob b2" aria-hidden="true"></div>
+    <div class="blob b3" aria-hidden="true"></div>
+    <div class="inner">
+      <span class="eyebrow">Data · Cloud · AI</span>
+      <h1>Nitya A. Kumar</h1>
+      <p class="tagline">IT &amp; Informatics graduate from Rutgers, Microsoft Certified in Azure Fundamentals and Azure AI Fundamentals.</p>
+      <div class="chips">
+        <span>Magna Cum Laude</span>
+        <span>2× Microsoft Certified</span>
+        <span>3rd Place, NGA MAJIC Hackathon</span>
+      </div>
+      <div class="contact">
+        <a class="primary" href="mailto:nitya.a.kumar6@gmail.com">Email me</a>
+        <a href="https://www.linkedin.com/in/nitya-kumar-01567227b/">LinkedIn</a>
+        <a href="https://github.com/nitya-kumar-6G">GitHub</a>
+      </div>
+    </div>
   </header>
 
   <nav>
@@ -467,27 +604,68 @@
   </main>
 
   <footer>
+    <a class="top" href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">↑ Back to top</a><br>
     Hosted on Microsoft Azure Static Web Apps · Deployed automatically with GitHub Actions
   </footer>
 
   <script>
     // Show one section at a time; the URL hash (#projects etc.) keeps links shareable.
     const tabs = ['about', 'experience', 'leadership', 'projects'];
+    const nav = document.querySelector('nav');
+    const navList = nav.querySelector('ul');
+    const indicator = document.createElement('span');
+    indicator.className = 'indicator';
+    navList.prepend(indicator);
+
+    function moveIndicator() {
+      const a = nav.querySelector('a.active');
+      if (!a) return;
+      indicator.style.width = a.offsetWidth + 'px';
+      indicator.style.transform = `translate(${a.parentElement.offsetLeft}px, ${a.parentElement.offsetTop - 5}px)`;
+    }
     function show(name) {
       if (!tabs.includes(name)) name = 'about';
       document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === name));
-      document.querySelectorAll('nav a').forEach(a => a.classList.toggle('active', a.dataset.tab === name));
+      nav.querySelectorAll('a').forEach(a => a.classList.toggle('active', a.dataset.tab === name));
+      moveIndicator();
+      observeReveals();
     }
     document.querySelectorAll('[data-tab]').forEach(link => {
       link.addEventListener('click', e => {
         e.preventDefault();
         history.replaceState(null, '', '#' + link.dataset.tab);
         show(link.dataset.tab);
-        window.scrollTo({ top: document.querySelector('nav').offsetTop, behavior: 'smooth' });
+        window.scrollTo({ top: nav.offsetTop, behavior: 'smooth' });
       });
     });
     window.addEventListener('hashchange', () => show(location.hash.slice(1)));
+    window.addEventListener('resize', moveIndicator);
+
+    // Fade items in as they scroll into view.
+    const io = 'IntersectionObserver' in window ? new IntersectionObserver(entries => {
+      entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }) : null;
+    function observeReveals() {
+      document.querySelectorAll('.panel.active section, .panel.active .item, .panel.active .card').forEach(el => {
+        if (el.classList.contains('in')) return;
+        if (!io) { el.classList.add('in'); return; }
+        el.classList.add('reveal');
+        io.observe(el);
+      });
+    }
+
+    // Scroll progress bar + nav border once scrolled.
+    const bar = document.querySelector('.progress');
+    function onScroll() {
+      const max = document.documentElement.scrollHeight - innerHeight;
+      bar.style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`;
+      nav.classList.toggle('scrolled', scrollY > nav.offsetTop - 1);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+
     show(location.hash.slice(1));
+    onScroll();
+    if (document.fonts) document.fonts.ready.then(moveIndicator);
     // Don't let the browser jump past the header when opening a #section link.
     if (location.hash) window.addEventListener('load', () => window.scrollTo(0, 0));
   </script>
