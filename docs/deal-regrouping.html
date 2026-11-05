@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Re-Grouping Split Mortgage Records | Nitya A. Kumar</title>
+  <meta name="description" content="A take-home data case study where I used AI heavily on purpose, then checked its work: re-grouping about 20,000 commercial mortgage records into real loans.">
+  <meta name="author" content="Nitya A. Kumar">
+  <meta name="theme-color" content="#6f4fa0">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%236f4fa0'/%3E%3Ctext x='32' y='42' font-family='Segoe UI,Arial,sans-serif' font-size='28' font-weight='700' fill='white' text-anchor='middle'%3ENK%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --accent: #6f4fa0; --accent-light: #9b7fd4; --accent-soft: #c9b6ef; --tag-bg: #efe7fa;
+      --text: #2a2235; --muted: #6b6178; --bg: #faf7fd; --card: #ffffff; --line: #e6dcf5;
+      --shadow: 0 1px 2px rgba(60,30,90,.06), 0 8px 24px rgba(60,30,90,.07);
+      --serif: "Fraunces", Georgia, serif;
+      --sans: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; font-family: var(--sans); color: var(--text); background: var(--bg); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+    ::selection { background: var(--accent-soft); }
+    a { color: var(--accent); }
+    .progress { position: fixed; top: 0; left: 0; height: 3px; width: 100%; z-index: 50; background: linear-gradient(90deg, var(--accent-light), var(--accent)); transform-origin: 0 50%; transform: scaleX(0); }
+
+    header { position: relative; overflow: hidden; color: white; padding: 28px 20px 72px;
+      background: linear-gradient(160deg, #3d2a5c 0%, var(--accent) 55%, var(--accent-light) 100%); }
+    header .blob { position: absolute; border-radius: 50%; filter: blur(60px); opacity: .5; animation: drift 18s ease-in-out infinite alternate; }
+    header .b1 { width: 340px; height: 340px; background: #c9b6ef; top: -120px; left: -80px; }
+    header .b2 { width: 300px; height: 300px; background: #f3b6d8; bottom: -140px; right: -60px; animation-delay: -6s; }
+    @keyframes drift { to { transform: translate(40px, 30px) scale(1.12); } }
+    .back { position: relative; display: inline-block; color: white; text-decoration: none; font-weight: 600; font-size: .92rem; opacity: .9; }
+    .back:hover { opacity: 1; text-decoration: underline; text-underline-offset: 3px; }
+    header .inner { position: relative; max-width: 760px; margin: 40px auto 0; text-align: center; }
+    .eyebrow { font-size: .8rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; opacity: .85; }
+    h1 { font-family: var(--serif); font-weight: 500; font-size: clamp(2rem, 5.5vw, 3.2rem); line-height: 1.12; margin: 12px 0 0; }
+    header .sub { margin: 14px auto 0; max-width: 580px; opacity: .92; font-size: 1.05rem; }
+    .chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 22px; }
+    .chips span { font-size: .84rem; font-weight: 500; padding: 4px 13px; border-radius: 999px; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.28); }
+
+    main { max-width: 780px; margin: -40px auto 0; padding: 0 18px 56px; position: relative; }
+    section { background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); padding: 28px 32px; margin-bottom: 22px; }
+    h2 { font-family: var(--serif); font-weight: 600; font-size: 1.45rem; margin: 0 0 12px; display: flex; align-items: center; gap: 12px; }
+    h2::before { content: ""; width: 10px; height: 10px; border-radius: 3px; transform: rotate(45deg); background: linear-gradient(135deg, var(--accent-light), var(--accent)); flex: none; }
+    h3 { font-size: 1.02rem; margin: 18px 0 4px; }
+    p { margin: 0 0 12px; }
+    ul { margin: 6px 0 12px; padding-left: 22px; }
+    li { margin-bottom: 6px; }
+    li::marker { color: var(--accent-light); }
+
+    .callout { background: linear-gradient(135deg, #f4eefc, #ece2fb); border: 1px solid #ddd0f3; }
+    .callout h2::before { background: var(--accent); }
+
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 16px 0 4px; }
+    .stat { background: var(--tag-bg); border-radius: 14px; padding: 14px 16px; }
+    .stat b { display: block; font-family: var(--serif); font-size: 1.6rem; font-weight: 600; color: var(--accent); line-height: 1.2; }
+    .stat span { font-size: .86rem; color: var(--muted); }
+
+    .rules { display: grid; gap: 12px; margin-top: 10px; }
+    .rule { display: flex; gap: 14px; align-items: flex-start; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+    .rule .n { flex: none; width: 34px; height: 34px; border-radius: 10px; background: var(--accent); color: white; font-weight: 700; display: grid; place-items: center; font-size: .9rem; }
+    .rule p { margin: 0; }
+
+    .pipe { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 12px 0; }
+    .pipe span { background: var(--tag-bg); color: var(--accent); font-weight: 600; font-size: .85rem; padding: 5px 12px; border-radius: 999px; }
+    .pipe span.da { background: var(--accent); color: white; }
+    .pipe i { color: var(--accent-light); font-style: normal; }
+
+    .calls { display: grid; gap: 12px; margin-top: 10px; }
+    .call { border-left: 3px solid var(--accent-light); padding: 4px 0 4px 16px; }
+    .call .who { font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .call p { margin: 2px 0 0; }
+
+    table { width: 100%; border-collapse: collapse; font-size: .93rem; margin-top: 8px; }
+    th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+    td.v { font-weight: 600; color: var(--accent); white-space: nowrap; }
+
+    .note { font-size: .9rem; color: var(--muted); }
+    footer { text-align: center; color: var(--muted); font-size: .88rem; padding: 0 16px 40px; }
+
+    .js .reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
+    .js .reveal.in { opacity: 1; transform: none; }
+    @media (max-width: 600px) { section { padding: 22px 18px; } td.v { white-space: normal; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } .js .reveal { opacity: 1; transform: none; } }
+  </style>
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+  <div class="progress" aria-hidden="true"></div>
+
+  <header>
+    <div class="blob b1" aria-hidden="true"></div>
+    <div class="blob b2" aria-hidden="true"></div>
+    <a class="back" href="../#projects">← Back to projects</a>
+    <div class="inner">
+      <div class="eyebrow">Take-home case study · Oct 2026</div>
+      <h1>Re-Grouping Split Mortgage Records into Real Loans</h1>
+      <p class="sub">A data analyst assessment for a commercial mortgage data company, where using AI heavily was the whole point. My job was to steer it and catch where it was wrong.</p>
+      <div class="chips">
+        <span>AI-assisted by design</span><span>Python · pandas</span><span>SQL</span><span>Entity resolution</span><span>Data validation</span>
+      </div>
+      <div style="margin-top:26px"><a href="deal-regrouping-slides.pdf" target="_blank" rel="noopener" style="display:inline-block;background:#fff;color:var(--accent);font-weight:600;text-decoration:none;padding:10px 22px;border-radius:999px">View the slides</a></div>
+    </div>
+  </header>
+
+  <main>
+
+    <section class="callout reveal">
+      <h2>Yes, I used a lot of AI. On purpose.</h2>
+      <p>The assessment was literally titled "AI-Assisted Data Analysis." The company encouraged full use of tools like Claude and said they were grading whether I could <b>understand the business problem, judge the data, and validate AI suggestions instead of just accepting them</b>. They also warned that AI answers can sound convincing and still be wrong.</p>
+      <p>So I didn't try to hide the AI. I built the whole project around it, including an AI "devil's advocate" whose only job was to attack the other agents' work, and I kept a journal of every call I made so I could show exactly where the AI's thinking ended and mine began.</p>
+    </section>
+
+    <section class="reveal">
+      <h2>The problem</h2>
+      <p>Commercial mortgage data comes from county property records, one record per property. So a single real loan can end up split across several rows: a loan backed by five buildings, a loan split into pieces when it's securitized, or a loan that gets relabeled from private credit to CMBS later on.</p>
+      <p>I got about 20,000 records that had already been grouped once, imperfectly. The task was to figure out which ones were actually the same loan and re-group them. There was no answer key and no rules given. Designing the logic was the test.</p>
+      <div class="stats">
+        <div class="stat"><b>~20,000</b><span>records going in</span></div>
+        <div class="stat"><b>~17,200</b><span>loan groups coming out</span></div>
+        <div class="stat"><b>~1,400</b><span>groups that merged 2+ records</span></div>
+        <div class="stat"><b>7</b><span>AI agents, 1 of them a devil's advocate</span></div>
+      </div>
+    </section>
+
+    <section class="reveal">
+      <h2>What a record looks like</h2>
+      <p class="note">Made-up example, not the company's data. It just shows the shape of the problem.</p>
+      <div style="overflow-x:auto">
+      <table>
+        <tr><th>Row</th><th>Deal name</th><th>Category</th><th>Amount</th><th>Date</th><th>Lender ID</th><th>Result</th></tr>
+        <tr><td><b>A</b></td><td>MAPLE 1042-RVR</td><td>Private credit</td><td>$250,000,000</td><td>Mar 3</td><td>1042</td><td class="v">Loan 1</td></tr>
+        <tr><td><b>B</b></td><td>MAPLE 1042-OAK</td><td>Private credit</td><td>$250,000,000</td><td>Mar 3</td><td>1042</td><td class="v">Loan 1 (another property)</td></tr>
+        <tr><td><b>C</b></td><td>MAPLE 1042-PNE</td><td>CMBS</td><td>$250,000,000</td><td>Mar 6</td><td>1042</td><td class="v">Loan 1 (relabeled)</td></tr>
+        <tr><td><b>D</b></td><td>HARBO 2210-RVR</td><td>Private credit</td><td>$250,000,000</td><td>Mar 3</td><td>2210</td><td style="color:var(--muted);font-weight:600">Separate: other lender</td></tr>
+        <tr><td><b>E</b></td><td>MAPLE 1042-ELM</td><td>Private credit</td><td>$250,000,000</td><td>Apr 20</td><td>1042</td><td style="color:var(--muted);font-weight:600">Separate: 48 days later</td></tr>
+      </table>
+      </div>
+      <p style="margin-top:14px">A, B and C share a lender, an exact amount and dates days apart, so they're one loan, even though B is a different property and C got relabeled. D has the same amount on the same day but a different lender, so it's not the same loan. E is too far apart in time.</p>
+    </section>
+
+    <section class="reveal">
+      <h2>What I found in the data</h2>
+      <ul>
+        <li><b>There were zero exact duplicates.</b> I tried Excel's Remove Duplicates first, and it found nothing. The problem was near-matches, which meant I needed real matching rules.</li>
+        <li><b>The deal name was misleading.</b> It looked like an ID, but it was glued together from other fields, and the dollar amount in it was cut off at 5 digits. "15000" could mean $15M, $150M or $1.5B. So I matched on the actual amount column instead.</li>
+        <li><b>The same amount alone means almost nothing.</b> About a third of records were round amounts, and one round amount showed up hundreds of times. Two different lenders with the same amount were no more likely to be on the same day than two random records.</li>
+        <li><b>The same lender + same amount + close dates was a strong signal.</b> Those pairs landed on the same day about half the time, versus under 1% for the same amount from different lenders.</li>
+      </ul>
+    </section>
+
+    <section class="reveal">
+      <h2>How I matched records</h2>
+      <p>I got to these rules step by step. First I tried amount + date, but that put different banks in the same group. Adding the lender ID fixed it. Records that linked to each other formed one group.</p>
+      <div class="rules">
+        <div class="rule"><div class="n">R1</div><p><b>Same lender ID, same exact amount, overlapping dates.</b> This is the strongest match, and the loan category doesn't have to agree, so relabeled loans still get caught.</p></div>
+        <div class="rule"><div class="n">R2</div><p><b>Same lender ID, same exact amount, 1 to 7 days apart.</b> The signal fades with time, so these get lower confidence.</p></div>
+        <div class="rule"><div class="n">R3</div><p><b>No lender ID?</b> Then I match on the lender's name text plus the same amount within 7 days, with a guard so that generic names like "FIRST" can't chain six different banks together.</p></div>
+      </div>
+      <p style="margin-top:14px">Every group gets a confidence level and a review flag, so anything uncertain is marked instead of guessed. My rule of thumb: only merge when the evidence clearly beats chance, and miss a few matches rather than merge two different loans.</p>
+    </section>
+
+    <section class="reveal">
+      <h2>How I set up the AI</h2>
+      <p>Instead of one long chat, I split the work into agents with one job each. They passed files to each other, not conversations, and nothing moved forward until the devil's advocate had tried to break it.</p>
+      <div class="pipe">
+        <span>Profiler</span><span>Name parser</span><i>→</i><span class="da">Devil's advocate</span><i>→</i><span>Signal analyst</span><i>→</i><span class="da">Devil's advocate</span><i>→</i><span>Matcher</span><span>CMBS linker</span><i>→</i><span>Validator</span><i>→</i><span class="da">Devil's advocate</span>
+      </div>
+      <p>The devil's advocate started fresh every time, saw only the outputs and the raw data, and re-ran the numbers with its own code. Every number an agent reported was logged next to the code that produced it, so claims could be checked one by one.</p>
+      <h3>What that caught before I submitted</h3>
+      <ul>
+        <li>A matching rule that let one generic lender name chain six different lenders into one group. That was a real over-merge bug, and it got fixed.</li>
+        <li>A wrong denominator, a "natural 7-day cut-off" that turned out not to exist, and a confident guess about a typo in the data that had no evidence behind it.</li>
+        <li>A first-pass stat that was inflated by a few huge clusters. That one was caught because I asked, "what logic does this use?"</li>
+      </ul>
+    </section>
+
+    <section class="reveal">
+      <h2>Where my judgment came in</h2>
+      <div class="calls">
+        <div class="call"><div class="who">I changed the method</div><p>The original plan gave low confidence to any round amount. After going through the cases, I realized roundness isn't the issue. What matters is how <b>common</b> the amount is. A shared $10M is weak evidence because it's everywhere. A shared $1.01B on the same day from the same bank is strong evidence, because two separate $1.01B loans that day isn't believable. I changed confidence to be based on how common the amount is.</p></div>
+        <div class="call"><div class="who">I sanity-checked with money</div><p>One group had 24 records of $500M from one lender on a single day. If those were separate loans, that's $12B in a day. I checked how much any lender records per day in the file, and the busiest day was less than half that. So reading it as one big portfolio loan made more sense.</p></div>
+        <div class="call"><div class="who">I disagreed with the AI</div><p>The AI called one group over-merged. I leaned toward it being the same loan, since it had the same lender, the same amount and everything inside one date range. I kept it flagged as risky instead of just going with either answer.</p></div>
+        <div class="call"><div class="who">I made the final calls</div><p>Each judgment call (the date window, round amounts, whether category has to match, and so on) was a setting I reviewed and approved, not something the AI picked silently.</p></div>
+      </div>
+    </section>
+
+    <section class="reveal">
+      <h2>Checking the results myself</h2>
+      <p>I reviewed 10 cases by hand, one or two from each risk type, and made my call <b>before</b> looking at what the AI thought.</p>
+      <table>
+        <tr><th>What I tested</th><th>My verdict</th></tr>
+        <tr><td>Unusual exact amount, same lender, same day</td><td class="v">Same loan</td></tr>
+        <tr><td>Round but rare amount, same day</td><td class="v">Same loan</td></tr>
+        <tr><td>Relabeled from private credit to CMBS</td><td class="v">Same loan</td></tr>
+        <tr><td>Round amount, 1 day apart, different category</td><td class="v">Not sure</td></tr>
+        <tr><td>No lender ID, matched on name text</td><td class="v">Same, low confidence</td></tr>
+        <tr><td>Long-dated record linking a chain</td><td class="v">Not sure, leaning same</td></tr>
+        <tr><td>Near miss, 8 days apart</td><td class="v">Right to keep apart</td></tr>
+        <tr><td>Near miss, ambiguous lender name</td><td class="v">Missed match</td></tr>
+      </table>
+      <p style="margin-top:14px"><b>Result:</b> of 8 merged groups, 6 looked right, 2 were unsure and 0 were clearly wrong. I also found 1 real missed match. The unsure ones were exactly the cases my method already marked as lower confidence, which was a good sign. Ten cases is a sanity check, not an error rate, and I said so in the write-up.</p>
+    </section>
+
+    <section class="reveal">
+      <h2>Where it could still be wrong</h2>
+      <ul>
+        <li><b>Batches of round amounts</b> on one day could be one portfolio loan or many separate loans. The data can't tell them apart.</li>
+        <li><b>Chaining:</b> a record with a months-long date range can link records that are far apart. Those groups are flagged.</li>
+        <li><b>Near-identical amounts</b> ($1,000,000,000 vs $999,999,999) get missed, because the rules need an exact match.</li>
+        <li><b>The 7-day window is a judgment call.</b> The signal fades gradually, so any cut-off misses some real matches.</li>
+      </ul>
+    </section>
+
+    <section class="reveal">
+      <h2>What I took away</h2>
+      <p>I went in knowing almost nothing about mortgage data. The biggest lesson was that AI is great at doing a lot of analysis fast, but it will also hand you a wrong number with total confidence. What made this work wasn't the code. It was setting up the AI so it had to check itself, asking "how do you know that?" a lot, and making the actual decisions myself.</p>
+      <p class="note">The dataset, code and full write-up belong to the company and stay private. Everything here is my own description of my approach. Numbers are rounded, and lender names are left out.</p>
+    </section>
+
+  </main>
+
+  <footer><a href="../#projects">← Back to projects</a></footer>
+
+  <script>
+    const bar = document.querySelector('.progress');
+    addEventListener('scroll', () => {
+      const max = document.documentElement.scrollHeight - innerHeight;
+      bar.style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`;
+    }, { passive: true });
+    const els = document.querySelectorAll('.reveal');
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .1 });
+      els.forEach(el => io.observe(el));
+    } else els.forEach(el => el.classList.add('in'));
+  </script>
+</body>
+</html>
