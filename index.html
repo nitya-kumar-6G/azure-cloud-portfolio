@@ -270,7 +270,9 @@
     .cert-gallery { margin-bottom: 18px; }
     .cert-gallery .thumb { background: #1b2a4a; padding: 0; aspect-ratio: 1492 / 838; }
     .cert-gallery .thumb img { object-fit: cover; }
-    .award-gallery .thumb { aspect-ratio: 1650 / 1275; }
+    .award-gallery .thumb { aspect-ratio: 16 / 10; background: #0b304b; }
+    .award-gallery .thumb img.contain { object-fit: contain; }
+    .award-gallery .thumb img.photo { object-position: 75% 40%; }
     .award-list { margin: 0; padding-left: 20px; }
     .award-list li { margin-bottom: 6px; }
     .award-list .meta { display: block; }
@@ -402,7 +404,7 @@
         <div class="gallery cert-gallery award-gallery">
           <div class="card">
             <a class="thumb" href="docs/certs/nga-majic-third-place.jpg" target="_blank" rel="noopener">
-              <img src="docs/thumbs/nga-majic-third-place.jpg" alt="Third Place certificate of accomplishment awarded to Nitya Kumar for the 2026 Moonshot Labs Analyst Jam for the Intelligence Community Challenge, from NGA Moonshot Labs and T-REX" loading="lazy">
+              <img class="contain" src="docs/thumbs/nga-majic-third-place.jpg" alt="Third Place certificate of accomplishment awarded to Nitya Kumar for the 2026 Moonshot Labs Analyst Jam for the Intelligence Community Challenge, from NGA Moonshot Labs and T-REX" loading="lazy">
             </a>
             <div class="body">
               <h3>3rd Place, NGA Moonshot Labs MAJIC Challenge</h3>
@@ -413,9 +415,21 @@
               </div>
             </div>
           </div>
+          <div class="card">
+            <a class="thumb" href="docs/verizon-winning-team.jpg" target="_blank" rel="noopener">
+              <img class="photo" src="docs/thumbs/verizon-winning-team.jpg" alt="Team Scarlet Impact with Verizon coach Aaron Patterson at the Verizon Smart Campus Challenge celebration" loading="lazy">
+            </a>
+            <div class="body">
+              <h3>Winning Team, Verizon Smart Campus Challenge</h3>
+              <p>One of three winning teams in the inaugural challenge · $3,000 prize · Verizon · 2025</p>
+              <div class="buttons">
+                <a href="docs/verizon-winning-team.jpg" target="_blank" rel="noopener">View photo</a>
+                <a href="docs/uniview-poster.jpg" target="_blank" rel="noopener">Poster</a>
+              </div>
+            </div>
+          </div>
         </div>
         <ul class="award-list">
-          <li><strong>Winner, Verizon Smart Campus Challenge</strong> (inaugural year)<span class="meta">Verizon · 2025</span></li>
           <li><strong>Magna Cum Laude</strong><span class="meta">Rutgers University–New Brunswick · 2026</span></li>
         </ul>
       </section>
@@ -539,7 +553,7 @@
             <li>Designed and pitched UniView, a 5G-powered app using real-time data visualization to address campus crowding and parking.</li>
             <li>Conducted user pain-point research to identify campus congestion and parking friction.</li>
           </ul>
-          <div class="see-project"><a href="#projects" data-tab="projects">See the poster &amp; abstract →</a></div>
+          <div class="see-project"><a href="#projects" data-tab="projects">See the poster &amp; abstract →</a> &nbsp;·&nbsp; <a href="docs/verizon-winning-team.jpg" target="_blank" rel="noopener">See the team photo →</a></div>
         </div>
 
         <div class="item">
